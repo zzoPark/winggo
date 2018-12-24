@@ -1,63 +1,93 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    [SerializeField] private float m_StartXSpeed = 1f;
-    [SerializeField] private float m_RightForce = 1f;
-    [SerializeField] private float m_MaxYSpeed = 30f;
-    [SerializeField] private float m_UpForce = 400f;
-    [SerializeField] private float m_FallMultiplier = 2.5f;
-    [SerializeField] private LayerMask m_WhatIsObstacle;    // A mask determining what is obstacle
+    [Range(1, 10)] public float health;
+    [Range(1, 10)] public float maxSpeed;
+    [Range(1, 10)] public float acceleration;
+    [Range(1, 10)] public float weight;
 
-    private bool m_Wing = false;
-    private bool m_Down = true;
-    private bool m_Crashed = false;
+    private static float _healthUnit = 50f;
+    private static float _speedUnit = 100f;
+    private static float _accelUnit = 0.1f;
+    private static float _weightUnit = 0.5f;
+
+    [ReadOnly] private float _health;
+    [ReadOnly] private float _maxSpeed;
+    [ReadOnly] private float _acceleration;
+    [ReadOnly] private float _weight;
+
+    [SerializeField] private float _startSpeed = 25f;
+    [SerializeField] private float _maxUpSpeed = 15f;
+    [SerializeField] private float _upForce = 300f;
+
+    [ReadOnly] private LayerMask _whatIsObstacle;
+
+    private bool _wing = false;
+    private bool _down = true;
+    private bool _crashed = false;
     
-    private Animator m_Animator;
-    private Rigidbody2D m_Rigidbody2D;
+    private Animator _animator;
+    private Rigidbody2D _rigidbody;
 
     private void Awake()
     {
-        m_Animator = GetComponent<Animator>();
-        m_Rigidbody2D = GetComponent<Rigidbody2D>();
-        m_Rigidbody2D.velocity = new Vector2(m_StartXSpeed, 0);
+        _animator = GetComponent<Animator>();
+        _rigidbody = GetComponent<Rigidbody2D>();
+
+        _health = health * _healthUnit;
+        _maxSpeed = maxSpeed * _speedUnit;
+        _acceleration = acceleration * _accelUnit;
+        _weight = weight * _weightUnit;
     }
 
+    private void Start()
+    {
+        _rigidbody.mass = _weight;
+        _rigidbody.velocity = new Vector2(_startSpeed, 0);
+    }
+
+    // Do animations
     private void Update()
     {
-        m_Wing = true;
-        m_Crashed = false;
+        _wing = true;
+        _crashed = false;
 
-        if (m_Rigidbody2D.velocity.y < 0)
+        if (_rigidbody.velocity.y < 0)
         {
-            m_Down = true;
+            _down = true;
         }
         else
         {
-            m_Down = false;
+            _down = false;
         }
 
-        m_Animator.SetBool("Wing", m_Wing);
-        m_Animator.SetBool("Down", m_Down);
+        _animator.SetBool("Wing", _wing);
+        _animator.SetBool("Down", _down);
     }
 
+    // Do physics
     private void FixedUpdate()
     {
         if (Input.GetButton("Up"))
         {
-            if (m_Rigidbody2D.velocity.y < m_MaxYSpeed)
+            if (_rigidbody.velocity.y < _maxUpSpeed)
             {
-                m_Rigidbody2D.AddForce(Vector2.up * m_UpForce);
+                _rigidbody.AddForce(Vector2.up * _upForce);
             }
         }
 
-        if (m_Rigidbody2D.velocity.y < 0)
+        if (_rigidbody.velocity.y < 0)
         {
-            m_Rigidbody2D.velocity += Vector2.up * Physics2D.gravity.y * (m_FallMultiplier - 1) * Time.deltaTime;
+            //_rigidbody.velocity += Vector2.up * Physics2D.gravity.y * (_fallMultiplier - 1) * Time.deltaTime;
         }
 
-        m_Rigidbody2D.AddForce(Vector2.right * m_RightForce);
+        if (_rigidbody.velocity.x < _maxSpeed)
+        {
+            _rigidbody.AddForce(Vector2.right * _acceleration);
+        }
     }
 }

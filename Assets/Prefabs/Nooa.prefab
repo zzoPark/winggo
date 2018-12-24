@@ -152,14 +152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0fe0456797b02045abc0baf46df23c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_StartXSpeed: 15
-  m_MaxYSpeed: 15
-  m_UpForce: 450
-  m_FallMultiplier: 2
-  m_RightForce: 1
-  m_WhatIsObstacle:
-    serializedVersion: 2
-    m_Bits: 1024
+  health: 6
+  maxSpeed: 7
+  acceleration: 7
+  weight: 6
 --- !u!114 &6897663962139102072
 MonoBehaviour:
   m_ObjectHideFlags: 0
