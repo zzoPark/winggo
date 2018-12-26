@@ -6,7 +6,7 @@ public class EchoEffect : MonoBehaviour
 {
     public GameObject echo;
     public float timeBetweenSpawns = 0.05f;
-    public float lifetime = 5f;
+    public float lifetime = 2f;
     private float timer;
 
     private void Start()
